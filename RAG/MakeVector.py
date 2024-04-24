@@ -42,9 +42,15 @@ def split_docs(docs):
     return split_docs
 
 # sentence transformer embedding
+from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
+from langchain.embeddings.huggingface import HuggingFaceBgeEmbeddings
 from sentence_transformers import SentenceTransformer
 def get_embedding_model(embedding_model_path):
-    return SentenceTransformer(embedding_model_path,device='cuda')
+    # return SentenceTransformer(embedding_model_path)
+    # logger.info(embedding_model_path)
+    # logger.info(os.environ.get(embedding_model_path))
+    # return SentenceTransformerEmbeddings(embedding_model_path)
+    return HuggingFaceBgeEmbeddings(model_name=embedding_model_path)
 
 from langchain.vectorstores.chroma import Chroma
 
@@ -62,7 +68,8 @@ def make_vectordb(tar_dir, embedding_model_path, persist_dir):
     for dir_path in tar_dir:
         docs.extend(get_text(dir_path))
     logger.info("get docs done")
-    split_docs=split_docs(docs)
+    splited_docs=split_docs(docs)
     logger.info("split done")
     embedding_model=get_embedding_model(embedding_model_path)
-    persist_vectordb(persist_dir, split_docs, embedding_model)
+    logger.info(embedding_model)
+    persist_vectordb(persist_dir, splited_docs, embedding_model)
